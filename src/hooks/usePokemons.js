@@ -8,34 +8,41 @@ export const usePokemons = () => {
     const [offset, setOffset] = useState(0);
     const [hasMore, setHasMore] = useState(true);
 
-    const loadPokemons = useCallback(async (reset = false) => {
+    const loadPokemons = useCallback(async (currentOffset, reset = false) => {
         try {
             setLoading(true);
             setError(null);
-            const data = await fetchPokemonList(20, reset ? 0 : offset);
+
+            const data = await fetchPokemonList(20, currentOffset);
+
             const pokemonDetails = await Promise.all(
-                data.results.map(async (pokemon) => {
-                    return await fetchPokemonDetails(pokemon.url);
-                })
+                data.results.map((pokemon) =>
+                    fetchPokemonDetails(pokemon.url)
+                )
             );
-            setPokemons(prev => reset ? pokemonDetails : [...prev, ...pokemonDetails]);
-            setOffset(prev => reset ? 20 : prev + 20);
+
+            setPokemons(prev =>
+                reset ? pokemonDetails : [...prev, ...pokemonDetails]
+            );
+
+            setOffset(prev => (reset ? 20 : prev + 20));
             setHasMore(data.next !== null);
+
         } catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
         }
-    }, [offset]);
-
-    useEffect(() => {
-        loadPokemons(true);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    // ✅ runs only once (no dependency issues)
+    useEffect(() => {
+        loadPokemons(0, true);
+    }, [loadPokemons]);
 
     const loadMore = () => {
         if (!loading && hasMore) {
-            loadPokemons();
+            loadPokemons(offset);
         }
     };
 
