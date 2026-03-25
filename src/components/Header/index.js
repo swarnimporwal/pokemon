@@ -1,6 +1,11 @@
+import { useLocation } from 'react-router-dom';
+import SearchBar from '../SearchBar';
 import './styles.css';
 
-const Header = () => {
+const Header = ({ search, setSearch, pokemons }) => {
+    const location = useLocation();
+    const showSearch = location.pathname === '/' || location.pathname === '/home';
+
     return (
         <header className="header">
             <div className="header-content">
@@ -11,6 +16,7 @@ const Header = () => {
                     <h1 className="project-title">Pokemon</h1>
                 </div>
                 <div className="header-center">
+                    {showSearch && <SearchBar search={search} setSearch={setSearch} pokemons={pokemons} />}
                 </div>
                 <div className="header-right">
                     <div className="username" title="Swarnim Porwal">SP</div>
