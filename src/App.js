@@ -2,10 +2,11 @@ import { useState, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import { usePokemons } from './hooks/usePokemons';
+import PokemonList from './components/PokemonList';
 import Header from './components/Header';
 
 function App() {
-  const { pokemons, } = usePokemons();
+  const { pokemons, loading, hasMore, loadMore } = usePokemons();
   const [search, setSearch] = useState('');
 
   const filteredPokemons = useMemo(() => {
@@ -14,8 +15,6 @@ function App() {
     );
   }, [pokemons, search]);
 
-  console.log('filteredPokemons', filteredPokemons);
-
   return (
     <Router>
       <div className="App">
@@ -23,8 +22,12 @@ function App() {
         <Routes>
           <Route
             path="/"
+            element={
+              <PokemonList pokemons={filteredPokemons} hasMore={hasMore} loadMore={loadMore} isSearching={!!search} />
+            }
           />
         </Routes>
+        {loading && <p style={{ textAlign: 'center', padding: '20px' }}>Loading...</p>}
       </div>
     </Router>
   );
