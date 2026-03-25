@@ -4,6 +4,7 @@ import './App.css';
 import { usePokemons } from './hooks/usePokemons';
 import PokemonList from './components/PokemonList';
 import Header from './components/Header';
+import PokemonDetail from './pages/PokemonDetail';
 
 function App() {
   const { pokemons, loading, hasMore, loadMore } = usePokemons();
@@ -26,6 +27,7 @@ function App() {
               <PokemonList pokemons={filteredPokemons} hasMore={hasMore} loadMore={loadMore} isSearching={!!search} />
             }
           />
+          <Route path="/pokemon/:id" element={<PokemonDetail />} />
         </Routes>
         {loading && <p style={{ textAlign: 'center', padding: '20px' }}>Loading...</p>}
       </div>

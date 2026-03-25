@@ -1,8 +1,27 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+jest.mock('./hooks/usePokemons', () => ({
+  usePokemons: () => ({
+    pokemons: [],
+    loading: false,
+    hasMore: false,
+    loadMore: jest.fn(),
+  }),
+}));
+
+jest.mock('react-router-dom', () => ({
+  BrowserRouter: ({ children }) => <div>{children}</div>,
+  Routes: ({ children }) => <div>{children}</div>,
+  Route: ({ element }) => element,
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/' }),
+  useParams: () => ({}),
+}));
+
+test('renders header and default path', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+  expect(screen.getByText(/Pokemon/i)).toBeInTheDocument();
+  expect(screen.getByPlaceholderText(/Search Pokémon/i)).toBeInTheDocument();
 });
